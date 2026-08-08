@@ -1,32 +1,28 @@
-# React + TypeScript + Vite
+# 🧠 3D Medical Tumour Detection
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A full-stack medical tumour detection and analysis application using a React frontend and Python backend with machine learning/deep learning components.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 👥 Collaboration Guide
 
-## React Compiler
+This project is maintained using Git and GitHub.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### ⚠️ Important
 
-## Expanding the Oxlint configuration
+The main branch contains the current working version of the project.
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+> **Do NOT directly modify or push to `main`.**
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+Every contributor must create their own branch before making changes.
+
+---
+
+# 🚀 Getting Started
+
+## 1. Clone the Repository
+
+```bash
+git clone https://github.com/Pranjal-Seluriyal/Medical_Tumour_Detection_3D.git
+cd Medical_Tumour_Detection_3D
 ```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
