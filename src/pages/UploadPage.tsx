@@ -7,7 +7,7 @@ export const UploadPage: React.FC = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
-
+  
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
   const [niftiFiles, setNiftiFiles] = useState<{
@@ -55,15 +55,15 @@ export const UploadPage: React.FC = () => {
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
     const fileNameLower = selectedFile.name.toLowerCase();
-    const isImage = allowedTypes.includes(selectedFile.type) ||
-      fileNameLower.endsWith('.png') ||
-      fileNameLower.endsWith('.jpg') ||
-      fileNameLower.endsWith('.jpeg');
-    const isDicom = fileNameLower.endsWith('.dcm') ||
-      fileNameLower.endsWith('.dicom') ||
-      selectedFile.type === 'application/dicom';
+    const isImage = allowedTypes.includes(selectedFile.type) || 
+                    fileNameLower.endsWith('.png') || 
+                    fileNameLower.endsWith('.jpg') || 
+                    fileNameLower.endsWith('.jpeg');
+    const isDicom = fileNameLower.endsWith('.dcm') || 
+                    fileNameLower.endsWith('.dicom') ||
+                    selectedFile.type === 'application/dicom';
     const isNifti = fileNameLower.endsWith('.nii') ||
-      fileNameLower.endsWith('.nii.gz');
+                    fileNameLower.endsWith('.nii.gz');
 
     if (!isImage && !isDicom && !isNifti) {
       showToast('Unsupported file type. Please upload a valid MRI scan (JPEG, PNG, DICOM, or NIfTI).');
@@ -76,13 +76,13 @@ export const UploadPage: React.FC = () => {
   const autoAssignNiftiFiles = (filesList: File[]): boolean => {
     const newFiles = { ...niftiFiles };
     let assignedCount = 0;
-
+    
     for (const f of filesList) {
       const name = f.name.toLowerCase();
       if (!name.endsWith('.nii') && !name.endsWith('.nii.gz')) {
         continue;
       }
-
+      
       if (name.includes('_t1ce')) {
         newFiles.t1ce = f;
         assignedCount++;
@@ -97,7 +97,7 @@ export const UploadPage: React.FC = () => {
         assignedCount++;
       }
     }
-
+    
     if (assignedCount > 0) {
       setNiftiFiles(newFiles);
       setFile(null);
@@ -117,7 +117,7 @@ export const UploadPage: React.FC = () => {
       } else if (item.isDirectory) {
         const dirReader = item.createReader();
         let allEntries: any[] = [];
-
+        
         const readEntries = () => {
           dirReader.readEntries(
             async (entries: any[]) => {
@@ -133,7 +133,7 @@ export const UploadPage: React.FC = () => {
             () => resolve([])
           );
         };
-
+        
         readEntries();
       } else {
         resolve([]);
@@ -168,21 +168,21 @@ export const UploadPage: React.FC = () => {
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-
+    
     if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
       const entries = Array.from(e.dataTransfer.items)
         .map((item) => item.webkitGetAsEntry())
         .filter((entry) => entry !== null);
-
+        
       const promises = entries.map((entry) => traverseFileTree(entry));
       const filesLists = await Promise.all(promises);
       const files = filesLists.flat();
-
+      
       if (files.length > 1) {
         const success = autoAssignNiftiFiles(files);
         if (success) return;
       }
-
+      
       if (files.length === 1) {
         const droppedFile = files[0];
         if (validateFile(droppedFile)) {
@@ -191,7 +191,7 @@ export const UploadPage: React.FC = () => {
             const success = autoAssignNiftiFiles([droppedFile]);
             if (success) return;
           }
-
+          
           setFile(droppedFile);
           setPreviewUrl(URL.createObjectURL(droppedFile));
           setNiftiFiles({ t1: null, t1ce: null, t2: null, flair: null });
@@ -203,7 +203,7 @@ export const UploadPage: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
-
+      
       if (currentSlotTarget !== 'all') {
         const selectedFile = files[0];
         if (validateFile(selectedFile)) {
@@ -217,12 +217,12 @@ export const UploadPage: React.FC = () => {
         setCurrentSlotTarget('all');
         return;
       }
-
+      
       if (files.length > 1) {
         const success = autoAssignNiftiFiles(files);
         if (success) return;
       }
-
+      
       const selectedFile = files[0];
       if (validateFile(selectedFile)) {
         const name = selectedFile.name.toLowerCase();
@@ -230,7 +230,7 @@ export const UploadPage: React.FC = () => {
           const success = autoAssignNiftiFiles([selectedFile]);
           if (success) return;
         }
-
+        
         setFile(selectedFile);
         setPreviewUrl(URL.createObjectURL(selectedFile));
         setNiftiFiles({ t1: null, t1ce: null, t2: null, flair: null });
@@ -254,7 +254,7 @@ export const UploadPage: React.FC = () => {
     } else {
       if (!file) return;
     }
-
+    
     if (backendStatus === 'offline') {
       showToast('BrainAI service is currently offline. Cannot begin analysis.');
       return;
@@ -279,7 +279,7 @@ export const UploadPage: React.FC = () => {
     } catch (err: any) {
       console.error('AI Predict API error:', err);
       setIsProcessing(false);
-
+      
       let errorMessage = 'AI predictions failed. Please check your network connection and try again.';
       if (err.response?.status === 413) {
         errorMessage = 'The uploaded file exceeds the maximum payload size supported by the server.';
@@ -288,7 +288,7 @@ export const UploadPage: React.FC = () => {
       } else if (err.code === 'ECONNABORTED') {
         errorMessage = 'The analysis request timed out. Please try again.';
       }
-
+      
       showToast(errorMessage);
     }
   };
@@ -307,7 +307,7 @@ export const UploadPage: React.FC = () => {
 
       {/* Main Content Canvas */}
       <main className="ml-[280px] flex-1 flex flex-col h-screen relative bg-surface-bright dark:bg-inverse-surface transition-colors duration-200 p-container-padding overflow-y-auto">
-
+        
         {/* Header Section */}
         <header className="mb-stack-md pt-4 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 max-w-7xl">
           <div>
@@ -318,7 +318,7 @@ export const UploadPage: React.FC = () => {
               Securely upload your MRI scans for preliminary AI analysis. This system uses advanced neural networks to identify patterns for your reviewing physician.
             </p>
           </div>
-
+          
           {/* Health Pill Status Indicator */}
           <div className="flex items-center gap-2 select-none">
             {backendStatus === 'checking' && (
@@ -344,9 +344,9 @@ export const UploadPage: React.FC = () => {
 
         {/* Upload Interface Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter max-w-7xl pb-stack-lg items-start">
-
+          
           <div className="col-span-1 md:col-span-7 flex flex-col gap-stack-md">
-
+            
             {/* Offline warning banner */}
             {backendStatus === 'offline' && (
               <div className="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 p-4 rounded-xl flex items-center gap-3 text-sm font-semibold animate-fade">
@@ -364,18 +364,17 @@ export const UploadPage: React.FC = () => {
               accept="*/*"
               multiple
             />
-
+            
             {/* Folder Upload Zone */}
             <input
               type="file"
               ref={folderInputRef}
               onChange={handleFolderChange}
               className="hidden"
-              {...({ webkitdirectory: "", directory: "" } as any)}
+              webkitdirectory=""
+              directory=""
               multiple
             />
-
-
 
             {!previewUrl ? (
               <div
@@ -383,12 +382,13 @@ export const UploadPage: React.FC = () => {
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 onClick={backendStatus === 'offline' ? undefined : triggerFileSelect}
-                className={`glass-panel rounded-xl p-8 border-dashed border-2 transition-all duration-300 flex flex-col items-center justify-center text-center min-h-[320px] group relative overflow-hidden ${backendStatus === 'offline'
+                className={`glass-panel rounded-xl p-8 border-dashed border-2 transition-all duration-300 flex flex-col items-center justify-center text-center min-h-[320px] group relative overflow-hidden ${
+                  backendStatus === 'offline' 
                     ? 'border-slate-500/20 opacity-55 cursor-not-allowed'
-                    : isDragging
-                      ? 'border-primary bg-primary/5 cursor-pointer'
-                      : 'border-primary/30 dark:border-inverse-primary/30 hover:border-primary/60 cursor-pointer'
-                  }`}
+                    : isDragging 
+                    ? 'border-primary bg-primary/5 cursor-pointer' 
+                    : 'border-primary/30 dark:border-inverse-primary/30 hover:border-primary/60 cursor-pointer'
+                }`}
               >
                 <span className="material-symbols-outlined text-primary dark:text-inverse-primary text-5xl mb-4 group-hover:-translate-y-0.5 transition-transform">
                   cloud_upload
@@ -400,7 +400,7 @@ export const UploadPage: React.FC = () => {
                   Supports PNG, JPEG, DICOM, NIfTI (Select/Drag all 4 modalities T1, T1ce, T2, FLAIR)
                 </p>
                 <div className="flex gap-3 justify-center z-10 relative">
-                  <button
+                  <button 
                     type="button"
                     onClick={(e) => { e.stopPropagation(); triggerFileSelect(); }}
                     disabled={backendStatus === 'offline'}
@@ -408,7 +408,7 @@ export const UploadPage: React.FC = () => {
                   >
                     Browse Files
                   </button>
-                  <button
+                  <button 
                     type="button"
                     onClick={(e) => { e.stopPropagation(); folderInputRef.current?.click(); }}
                     disabled={backendStatus === 'offline'}
@@ -428,7 +428,7 @@ export const UploadPage: React.FC = () => {
                         <span className="material-symbols-outlined text-primary">layers</span>
                         Multi-Modal NIfTI Scans
                       </h4>
-                      <button
+                      <button 
                         onClick={() => {
                           setNiftiFiles({ t1: null, t1ce: null, t2: null, flair: null });
                           setPreviewUrl('');
@@ -443,7 +443,7 @@ export const UploadPage: React.FC = () => {
                       {(['t1', 't1ce', 't2', 'flair'] as const).map((key) => {
                         const fileObj = niftiFiles[key];
                         const label = key === 't1ce' ? 'T1-Contrast (T1ce)' : key.toUpperCase();
-
+                        
                         return (
                           <div key={key} className="flex justify-between items-center p-3 rounded-lg bg-surface-container dark:bg-surface-container-high border border-outline-variant/10">
                             <div className="flex items-center gap-2.5 overflow-hidden">
@@ -460,12 +460,13 @@ export const UploadPage: React.FC = () => {
                               </div>
                             </div>
 
-                            <button
+                            <button 
                               onClick={() => triggerSlotSelect(key)}
-                              className={`text-xs px-3.5 py-1.5 rounded-full font-bold cursor-pointer transition-colors border-none ${fileObj
-                                  ? 'bg-slate-500/10 hover:bg-slate-500/25 text-on-surface dark:text-surface'
+                              className={`text-xs px-3.5 py-1.5 rounded-full font-bold cursor-pointer transition-colors border-none ${
+                                fileObj 
+                                  ? 'bg-slate-500/10 hover:bg-slate-500/25 text-on-surface dark:text-surface' 
                                   : 'bg-primary/10 hover:bg-primary/20 text-primary dark:text-primary-fixed-dim'
-                                }`}
+                              }`}
                             >
                               {fileObj ? 'Replace' : 'Select'}
                             </button>
@@ -503,7 +504,7 @@ export const UploadPage: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
                       <div className="flex justify-between items-center w-full">
                         <span className="text-white/90 font-label-sm text-label-sm">{file?.name}</span>
-                        <button
+                        <button 
                           onClick={() => { setFile(null); setPreviewUrl(''); }}
                           className="bg-red-500/80 hover:bg-red-600 text-white rounded-full p-1 border-none cursor-pointer flex items-center justify-center"
                           title="Remove file"
@@ -519,8 +520,9 @@ export const UploadPage: React.FC = () => {
                 <button
                   onClick={startAnalysis}
                   disabled={backendStatus === 'offline'}
-                  className={`w-full bg-gradient-to-r from-primary to-secondary text-white rounded-lg py-4 font-title-md text-title-md shadow-lg hover:shadow-xl hover:opacity-95 transition-all scale-100 active:scale-95 flex items-center justify-center gap-2 border-none cursor-pointer font-bold ${backendStatus === 'offline' ? 'opacity-50 cursor-not-allowed saturate-50' : ''
-                    }`}
+                  className={`w-full bg-gradient-to-r from-primary to-secondary text-white rounded-lg py-4 font-title-md text-title-md shadow-lg hover:shadow-xl hover:opacity-95 transition-all scale-100 active:scale-95 flex items-center justify-center gap-2 border-none cursor-pointer font-bold ${
+                    backendStatus === 'offline' ? 'opacity-50 cursor-not-allowed saturate-50' : ''
+                  }`}
                 >
                   <span className="material-symbols-outlined icon-fill" style={{ fontVariationSettings: "'FILL' 1" }}>
                     neurology
@@ -552,7 +554,7 @@ export const UploadPage: React.FC = () => {
       {isProcessing && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-inverse-surface/85 dark:bg-black/90 backdrop-blur-md animate-fade">
           <div className="w-full max-w-md p-6 text-center flex flex-col items-center gap-6">
-
+            
             {/* Spinning/pulsing holographic brain visual indicator */}
             <div className="relative w-32 h-32 flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full border border-white/10 shadow-2xl">
               <span className="material-symbols-outlined text-primary dark:text-inverse-primary text-[64px] animate-pulse">
@@ -575,7 +577,7 @@ export const UploadPage: React.FC = () => {
               {stages.map((stage, index) => {
                 const isActive = index === processingStage;
                 const isCompleted = index < processingStage;
-
+                
                 return (
                   <div key={index} className="flex items-center gap-3 transition-opacity duration-300">
                     {isCompleted ? (
@@ -585,8 +587,9 @@ export const UploadPage: React.FC = () => {
                     ) : (
                       <span className="material-symbols-outlined text-slate-600 text-[18px]">circle</span>
                     )}
-                    <span className={`text-sm ${isCompleted ? 'text-slate-400 line-through' : isActive ? 'text-white font-bold' : 'text-slate-500'
-                      }`}>
+                    <span className={`text-sm ${
+                      isCompleted ? 'text-slate-400 line-through' : isActive ? 'text-white font-bold' : 'text-slate-500'
+                    }`}>
                       {stage}
                     </span>
                   </div>
@@ -596,7 +599,7 @@ export const UploadPage: React.FC = () => {
 
             {/* Shimmer Progress bar */}
             <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-              <div
+              <div 
                 className="bg-gradient-to-r from-primary to-secondary h-full rounded-full transition-all duration-300"
                 style={{ width: `${((processingStage + 1) / stages.length) * 100}%` }}
               ></div>
