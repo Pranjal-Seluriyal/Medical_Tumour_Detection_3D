@@ -1,7 +1,12 @@
 import axios from 'axios';
 
 export const USE_MOCK = (import.meta as any).env.VITE_USE_MOCK === 'true';
-export const API_BASE_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:8000';
+export const formatApiBaseUrl = (url?: string): string => {
+  const rawUrl = (url || 'http://localhost:8000').trim().replace(/\/+$/, '');
+  return rawUrl.endsWith('/api') ? rawUrl : `${rawUrl}/api`;
+};
+
+export const API_BASE_URL = formatApiBaseUrl((import.meta as any).env.VITE_API_URL);
 
 const api = axios.create({
   baseURL: API_BASE_URL,
