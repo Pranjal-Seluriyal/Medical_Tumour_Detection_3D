@@ -1,3 +1,4 @@
+import heroImage from "../assets/hero.png";
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -71,12 +72,12 @@ export const LandingPage: React.FC = () => {
               </Link>
             </div>
           </div>
-          
+
           <div className="relative w-full aspect-[1.79] rounded-xl overflow-hidden glass-panel shadow-2xl flex items-center justify-center p-4">
             <img
+              src={heroImage}
               alt="Futuristic Brain Illustration"
               className="w-full h-full object-cover rounded-lg"
-              src="https://lh3.googleusercontent.com/aida/AP1WRLu_GXVGluNiL4_loAfvMuDSwA7l-UYZ-HtFz3oXkZi7Nt3S9DxZLsPqZarEnUzllbrEdWjv1oQIDN5TClsXVVZVYl_CLViJUtkXVmOCrjPp-ZBMQ_81nEj3u6lYs-iKcAx1zt82MI82P_c6F3JN1tEFa7qhXBNfogp9x6iKIIF8mc3fKEjAIOheL4bSF-zUdCpyqepL5z3yBSKeBM26zyCkKvhEQSPlwOL73lkzEO7Azo78BEnkeuKYbhA"
             />
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-secondary/10 pointer-events-none rounded-xl"></div>
           </div>
@@ -92,7 +93,7 @@ export const LandingPage: React.FC = () => {
               A secure, simple 4-step AI severity evaluation process.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
             {[
               { step: "01", title: "Upload MRI", desc: "Drag and drop your high-resolution MRI scan files securely.", icon: "cloud_upload" },
@@ -157,7 +158,7 @@ export const LandingPage: React.FC = () => {
               Find answers to common questions about our AI neuro-evaluation portal.
             </p>
           </div>
-          
+
           <div className="space-y-4 w-full">
             {faqs.map((faq, index) => (
               <div key={index} className="glass-panel rounded-xl overflow-hidden">
